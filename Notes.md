@@ -21,3 +21,7 @@ Create tasks
 Update task function for make his category "done"
 
 delete task function
+
+### 3. in summary
+
+I could not link the backend to the front about CORS, but in postman all requests arrive at the back and all functions works
