@@ -18,6 +18,5 @@ type TAddTask struct {
 }
 
 type TUpdateTask struct {
-	ID          int       `json:"id" validate:"required"`
 	Result      string     `json:"result" validate:"required,max=512"`
 }
