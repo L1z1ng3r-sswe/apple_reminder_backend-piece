@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"apple-reminder_backend/db"
 	"apple-reminder_backend/internal/helpers"
+	"apple-reminder_backend/internal/models"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -19,7 +21,7 @@ func GetAllTasks(c *gin.Context) {
 	c.JSON(http.StatusOK, AllTasks)
 }
 
-func GetTaskByID(c *gin.Context) {
+func GetTaskByID(c *gin.Context) {	
 	id := c.Param("id")
 	intId, err := strconv.Atoi(id)
 	if err != nil {
@@ -33,4 +35,19 @@ func GetTaskByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, task)
+}
+
+func CreateTask(c *gin.Context) {
+	var newTask models.TAddTask
+
+	if err := c.ShouldBindJSON(&newTask); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	_, err := db.DB.Exec("insert into tasks (text, timer) values ($1, $2)", newTask.Text, newTask.Timer)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"ok": "user is created"})
 }

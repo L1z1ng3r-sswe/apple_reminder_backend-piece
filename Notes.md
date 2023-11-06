@@ -15,3 +15,5 @@ Create the initial directory structure for project.
 ### 2. Functions
 
 Get all tasks , get a task by id
+
+Create tasks
