@@ -19,3 +19,5 @@ Get all tasks , get a task by id
 Create tasks
 
 Update task function for make his category "done"
+
+delete task function
