@@ -85,3 +85,37 @@ func UpdateTaskIsDone(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"ok": "task IsDone field is updated"})
 }
+
+func DeleteTask(c *gin.Context) {
+	id := c.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error: ID '%s' is not a valid integer", id)})
+		return
+	}
+
+	
+	
+	if _, err := helpers.GetTaskByID_help(c, intID); err != nil {
+		return
+	}
+
+	result, err := db.DB.Exec("DELETE FROM tasks WHERE id = $1", intID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if rowsAffected == 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to delete task with ID '%d'", intID)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"ok": fmt.Sprintf("Task with ID '%d' is deleted", intID)})
+}
