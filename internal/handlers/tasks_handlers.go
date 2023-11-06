@@ -51,3 +51,37 @@ func CreateTask(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"ok": "user is created"})
 }
+
+func UpdateTaskIsDone(c *gin.Context) {
+	id := c.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error: ID '%s' is not a valid integer", id)})
+		return
+	}
+
+	var updatedTask models.TUpdateTask
+	if err := c.ShouldBindJSON(&updatedTask); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	
+	result, err := db.DB.Exec("UPDATE tasks SET isDone = $1, result = $2 WHERE id = $3", true, updatedTask.Result, intID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if rowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Item with ID '%d' not found", intID)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"ok": "task IsDone field is updated"})
+}
